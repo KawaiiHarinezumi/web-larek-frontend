@@ -1,5 +1,5 @@
 import { IContactsForm } from "../../types";
-import { IEvents } from "../base/events";
+import { IEvents } from "../base/Events";
 import { Form } from "./FormUI";
 import { ensureElement } from "../../utils/utils";
 

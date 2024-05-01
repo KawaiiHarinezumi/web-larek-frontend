@@ -1,7 +1,7 @@
 import './scss/styles.scss';
 import { WebLarekApi } from "./components/connector/WebLarekApi";
 import { API_URL, CDN_URL } from "./utils/constants";
-import { EventEmitter } from "./components/base/events";
+import { EventEmitter } from "./components/base/Events";
 import { AppState } from './components/model/AppState';
 import { CardUI } from './components/view/CardUI';
 import { ensureElement, cloneTemplate } from './utils/utils';

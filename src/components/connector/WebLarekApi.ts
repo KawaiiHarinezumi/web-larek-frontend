@@ -1,5 +1,5 @@
 import { IOrder, IProduct, IResult } from "../../types";
-import { Api, ApiListResponse} from "../base/api";
+import { Api, ApiListResponse} from "../base/Api";
 
 export class WebLarekApi extends Api {
     cdn: string;

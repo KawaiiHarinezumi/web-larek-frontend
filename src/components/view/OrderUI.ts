@@ -1,6 +1,6 @@
 import { IOrderForm } from "../../types";
 import { ensureElement } from "../../utils/utils";
-import { IEvents } from "../base/events";
+import { IEvents } from "../base/Events";
 import { Form } from "./FormUI";
 
 
