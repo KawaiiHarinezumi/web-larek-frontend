@@ -30,15 +30,6 @@ export class ContactsUI extends Form<IContactsForm> {
         return this._inputEmail.value; 
     }
 
-    checkValid() {
-        if ( /\S+\@\S+\.\S{2,}/.test(this._inputEmail.value) &&
-        /\+7 \(\d\d\d\) \d\d\d-\d\d-\d\d/.test(this._inputPhone.value) ) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     clean() {
         this._inputPhone.value = '';
         this._inputEmail.value = '';

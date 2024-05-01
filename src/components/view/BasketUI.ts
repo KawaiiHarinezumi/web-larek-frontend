@@ -4,7 +4,7 @@ import { IEvents } from "../base/Events";
 import { IBasketUI } from "../../types";
 
   
-  export class BasketUI extends Component<IBasketUI> {
+export class BasketUI extends Component<IBasketUI> {
     protected _basketList: HTMLElement;
     protected _total: HTMLElement;
     protected _button: HTMLButtonElement;
@@ -35,8 +35,12 @@ import { IBasketUI } from "../../types";
         });
     }
   
-    set total(total: number) {
-        this.setText(this._total, `${total} синапсов`);
+    setTotal(priceless: boolean, total: number) {
+        if(priceless) {
+            this.setText(this._total, 'Бесценно');
+        } else {
+            this.setText(this._total, `${total} синапсов`);
+        }
     }
     
     setButtonInactive() {

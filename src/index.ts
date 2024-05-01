@@ -103,7 +103,7 @@ events.on('card:remove', (item: IProduct) => {
 
 //открытие модального окна корзины
 events.on('basket:open', () => {
-    basketModal.total = appData.sumBasket();
+    basketModal.setTotal(appData.checkPriceless(), appData.sumBasket());
     basketModal.basketList = appData.basket.map((element: IProduct) => {
         const card = new CardUI(cloneTemplate(cardBasketTemplate), undefined, {
             onClick: () => {events.emit('card:remove', element);
@@ -115,7 +115,7 @@ events.on('basket:open', () => {
             price: element.price
         })
     })
-    if(appData.countBasket() === 0) { 
+    if(appData.countBasket() === 0 || appData.checkPriceless()) { 
         basketModal.setButtonInactive();
     } else {
         basketModal.setButtonActive();
@@ -133,15 +133,14 @@ events.on('order:open', () => {
             errors: []
         })
     });
-    orderModal.valid = orderModal.checkValid();
+    orderModal.valid = appData.checkValidOrder();
 });
 
 // действие при изменении значений в модальном окне заказа
 events.on(/^order\..*:change/, () => {    
-    orderModal.valid = orderModal.checkValid();
-
-    appData.order.address = orderModal.getAddress();
-    appData.order.payment = orderModal.getPayment();
+    appData.address = orderModal.getAddress();
+    appData.payment = orderModal.payment;
+    orderModal.valid = appData.checkValidOrder();
 });
 
 // открытие модального окна контактов
@@ -154,21 +153,19 @@ events.on('order:submit', () => {
             errors: []
         })
     });
-    contactModal.valid = contactModal.checkValid();
+    contactModal.valid = appData.checkValidContacts();
 });
 
 // действие при изменении значений в модальном окне контактов
 events.on(/^contacts\..*:change/, (errors: Partial<ContactsUI>) => {
-    contactModal.valid = contactModal.checkValid();
-
-    appData.order.email = contactModal.getEmail();
-    appData.order.phone = contactModal.getPhone();
+    appData.email = contactModal.getEmail();
+    appData.phone = contactModal.getPhone();
+    contactModal.valid = appData.checkValidContacts();
 });
 
 // отправка заказа
 events.on('contacts:submit', () => {
-    appData.fillOrder();
-    api.orderProducts(appData.order)
+    api.orderProducts(appData.fillOrder())
     .then(res => {
         events.emit('success', res)
     })
@@ -182,6 +179,7 @@ events.on('success', (res: {
     id: string,
     total: number,
 }) => {
+    events.emit('refresh:all');
     successModal.setTotal(res.total);
     popup.render({
         content: successModal.render(),
@@ -200,11 +198,15 @@ events.on('popup:close', () => {
 
 // очистка данных
 events.on('refresh:all', () => {
-    appData.clean();
-    events.emit('basket:change');
-    popup.close();
     orderModal.clean();
     contactModal.clean();
+    appData.clean();
+    events.emit('basket:change');
+});
+
+//закрытие попапа удачной покупки
+events.on('success:close', () => {
+    popup.close();
 });
 
 //получение начальных данных

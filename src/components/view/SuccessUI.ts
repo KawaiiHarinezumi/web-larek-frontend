@@ -12,8 +12,8 @@ export class SuccessUI extends Component<ISuccessUI> {
 
         this._button = ensureElement<HTMLButtonElement>('.order-success__close', container);
         this._button.addEventListener('click', () => {
-            events.emit('refresh:all');
-          });
+            this.events.emit('success:close');
+        });
     }
 
     setTotal(total: number) {

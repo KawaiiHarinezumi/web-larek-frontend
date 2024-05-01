@@ -5,14 +5,10 @@ export class AppState extends Model<IAppState> {
     stock: IProduct[] = []; 
     activeProduct: IProduct | null = null;
     basket: IProduct[] = [];
-    order: IOrder = {
-        address: '',
-        payment: 'card',
-        email: '',
-        total: 0,
-        phone: '',
-        items: []
-      };
+    address: string = '';
+    payment: string = '';
+    email: string = '';
+    phone: string = '';
 
     setStock(list: IProduct[]) {
         this.stock = list;
@@ -35,6 +31,10 @@ export class AppState extends Model<IAppState> {
         return (match >= 0); //true - если эелемент в корзине, false - иначе
     }
 
+    checkPriceless() {
+        return this.basket.some( ({price}) => price == null);
+    }
+
     sumBasket() {
         return this.basket.reduce((sum, current) => sum + current.price, 0);
     }
@@ -45,28 +45,50 @@ export class AppState extends Model<IAppState> {
 
     paymentSet(buttonContent: string) {
         if(buttonContent === 'Онлайн') {
-            this.order.payment = 'online';
+            this.payment = 'online';
         }
         if(buttonContent === 'При получении') {
-            this.order.payment = 'offline';
+            this.payment = 'offline';
         }
     }
 
+    checkValidOrder() { 
+        if (this.payment.length > 0 && this.address.length > 0) { 
+            return true; 
+        } else { 
+            return false; 
+        } 
+    }
+
+    checkValidContacts() { 
+        if (this.email.length > 0 && this.phone.length > 0) { 
+            return true; 
+        } else { 
+            return false; 
+        } 
+    } 
+
     fillOrder() {
-        this.order.total = this.sumBasket();
-        this.order.items = []; 
+        let itemsBuffer: string[] = [];
         this.basket.forEach( (element) => {
-            this.order.items.push(element.id); 
+            itemsBuffer.push(element.id); 
         });
+        const order: IOrder = {
+            total: this.sumBasket(),
+            items: itemsBuffer,
+            payment: this.payment,
+            email: this.email,
+            phone: this.phone,
+            address: this.address,
+        }
+        return order;
     }
 
     clean() {
-        this.order.items.splice(0, this.order.items.length);
-        this.order.payment = "";
-        this.order.total = 0;
-        this.order.address = "";
-        this.order.email = "";
-        this.order.phone = "";
+        this.payment = "";
+        this.address = "";
+        this.email = "";
+        this.phone = "";
         this.basket.splice(0, this.basket.length);
         this.activeProduct = null;
     }
